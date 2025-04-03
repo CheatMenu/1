@@ -1,4 +1,3 @@
-﻿#Persistent
 #NoEnv
 #SingleInstance Force
 SetWinDelay, -1
@@ -17,6 +16,7 @@ global toggleBob := false
 global ClickX := 0
 global StartTime := A_TickCount
 
+; Создаем окно, которое всегда сверху и без заголовка
 Gui, +AlwaysOnTop -Caption +ToolWindow +E0x20
 Gui, Color, 0x000000 ; Чёрный фон
 Gui, Font, s10 cWhite, Arial ; Белый текст
@@ -31,7 +31,7 @@ Gui, Add, Text, x10 y50 w380 h2, ; Разделитель
 Gui, Add, Text, x10 y60, [F1] - AUTO FARM ABILITIES
 Gui, Add, Text, x10 y80, [F2] - W/S AUTO CLOUD MASTERY
 Gui, Add, Text, x10 y100, [F3] - AUTO FARM BRICK (MASTERY)
-Gui, Add, Text, x10 y120, [F4] - AUTO FARM BOB (ARENA BUTTON)
+Gui, Add, Text, x10 y120, [F4] - AUTO FARM BOB (NOT WORKING ANYMORE)
 Gui, Add, Text, x10 y140, [M] - Exit
 Gui, Add, Text, x10 y160 w380 h2, ; Разделитель
 
@@ -48,12 +48,12 @@ UpdateTime:
     GuiControl,, Runtime, Runtime: %Elapsed%s
 return
 
-~LButton::
+~LButton:: 
     MouseGetPos, ClickX
     GuiControl,, ClickCount, Click X: %ClickX%
 return
 
-F1::
+F1:: ; Автоферма
     toggleE := !toggleE
     GuiControl,, Mode, Current Mode: E-Spam
     if (toggleE) {
@@ -67,7 +67,7 @@ PressE:
     Send, e
 return
 
-F2::
+F2:: ; Авто облака
     toggleWS := !toggleWS
     GuiControl,, Mode, Current Mode: W/S Loop
     if (toggleWS) {
@@ -87,7 +87,7 @@ MoveLoop:
     Send, {s up}
 return
 
-F3::
+F3:: ; Комплексная ферма
     toggleComplex := !toggleComplex
     GuiControl,, Mode, Current Mode: Complex Loop
     if (toggleComplex) {
@@ -130,57 +130,5 @@ ActionLoop:
     goto, ActionLoop
 return
 
-F4::
-    toggleBob := !toggleBob
-    GuiControl,, Mode, Current Mode: Auto Farm BOB
-    if (toggleBob) {
-        SetTimer, AutoFarmBob, 500
-    } else {
-        SetTimer, AutoFarmBob, Off
-    }
-return
 
-AutoFarmBob:
-    MissingTime := 0
-    Send, /    
-    Send, [+] STARTED
-    Send, {Enter}
-    Loop {
-        ImageSearch, x, y, 0, 0, A_ScreenWidth, A_ScreenHeight, *50 %A_ScriptDir%\loopdata\EnterArena.png
-        if (ErrorLevel = 0) {
-            Loop {
-                ImageSearch, x, y, 0, 0, A_ScreenWidth, A_ScreenHeight, *50 %A_ScriptDir%\loopdata\EnterArena.png
-                if (ErrorLevel = 0) {
-                    MouseMove, x, y, 10
-                    Sleep, 100
-                    Click
-                    Sleep, 500
-                    Send, {e}
-                    Sleep, 50
-                    Send, {Escape}
-                    Sleep, 200
-                    Send, r
-                    Sleep, 200
-                    Send, {Enter}
-                    MouseMove, x, y-10, 0
-                } else {
-                    MissingTime += 100
-                    if (MissingTime >= 7000) {
-                        MouseMove, x, y-10, 0
-                        Send, {Escape}
-                        Sleep, 200
-                        Send, r
-                        Sleep, 200
-                        Send, {Enter}
-                        MissingTime := 0
-                        break
-                    }
-                }
-                Sleep, 100
-            }
-        }
-        Sleep, 100
-    }
-return
-
-m::ExitApp
+m::ExitApp  ; Выход из программы
