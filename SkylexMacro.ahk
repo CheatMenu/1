@@ -129,6 +129,3 @@ ActionLoop:
     Sleep, 50
     goto, ActionLoop
 return
-
-
-m::ExitApp  ; Выход из программы
